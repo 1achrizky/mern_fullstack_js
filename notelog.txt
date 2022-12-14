@@ -1,0 +1,413 @@
+https://www.youtube.com/watch?v=OQspok-swzY
+Tutorial CRUD Realtime dengan Node JS, Express, MySQL, React JS (Prisma + SWR)
+Coder Media
+=================
+pada backend, run:
+>>nodemon index
+
+pada frontend:
+>>npm start
+http://localhost:3000
+
+
+
+=============
+
+buat folder backend.
+masuk pada folder backend. ketik:
+>>npm init -y
+
+install express
+>>npm i express cors dotenv
+
+install prisma (sebagai dev dependency)
+>>npm i -D prisma
+
+install prisma client
+>>npm i @prisma/client
+sehingga kita memiliki prisma-client sebagai dependencynya
+
+kemudian initialize prismanya
+>>npx prisma init
+maka akan muncul folder baru dengan nama prisma, di dalamnya ada file schema.prisma.
+kemudian muncul juga file .env
+Default awal keduanya yaitu postgresql. Ubah menjadi mysql.
+
+pada .env perhatikan, ganti port menjadi port mysql= 3306
+DATABASE_URL="mysql://yourusername:youtpassword@localhost:3306/mernstack"
+
+tidak perlu buat db manual, karena prisma akan menggenerate secara otomatis.
+
+untuk buat table, buat pada schema.prisma.
+gunakan extension vscode(bantuan highlight) bernama prisma.
+
+migrate dengan prisma (ada devnya, karena kita menginstall prisma as devDependency)
+>>npx prisma migrate dev
+Akan terbuat file migrate.
+And database created successfully, namely mernstack.
+
+pada package.json, tambahkan type=>module (boleh dibawah description), agar dapat dibaca ES6 syntax untuk import dan export module.
+"type": "module",
+
+pada package.json, "main": "index.js", adalah entry point kita. 
+buat newfile pada backend, index.js
+
+pertama, import express, dsb
+
+app.listen( ....PORT... );
+isi portnya pada .env, buat variable baru.
+
+app.listen(process.env.APP_PORT, ()=>{
+    console.log('Server up and running...');
+});
+
+[[[ ()=>{...} ]]]  adalah callback
+
+Gunakan nodemon, agar setiap kita melakukan perubahan pada filenya, kita tidak perlu merestart servernya.
+cek:
+>>nodemon -v
+
+install 
+>>npm install --global nodemon
+
+====
+[ERROR WINDOWS 10] https:/go.microsoft.com/fwlink/?LinkID=135170
+https://stackoverflow.com/questions/51174950/nodemon-not-working-in-windows-10
+Try this for Windows
+Open PowerShell and enter the following commands.
+A)Set-ExecutionPolicy RemoteSigned
+B)Set-ExecutionPolicy Unrestricted
+C)Get-ExecutionPolicy
+D)Exit
+====
+
+>>nodemon index
+
+
+app.use(cors());
+app.use(express.json());
+// agar dapat menerima data dalam format json
+
+buat folder:  controllers, routes
+buat file:
+-controllers\ProductController.js
+-routes\ProductRoute.js
+
+pada ProductRoute.js, buat get(),post(),patch(),delete().
+
+import ProductRoute.js pada index.js:
+import ProductRoute from "./routes/ProductRoute.js";
+Add middleware:
+app.use(ProductRoute);
+
+
+Kemudian fokus pada ProductController.
+Import PrismaClient:
+import { PrismaClient } from "@prisma/client";
+Buat const prisma:
+const prisma = new PrismaClient();
+
+getnya buat async.
+
+Testing REST API:
+Install vscode extension: Rest Client
+buat file pengujian api pada backend: request.rest
+T}} 20.14
+GET http://localhost:5000/products
+
+
+###buat createProduct pada ProductController.
+prisma.product pada controller berasal dari folder prisma\schema.prisma\{object Product}
+Pada request.rest:
+POST http://localhost:5000/products
+Content-Type: application/json
+
+{
+    "name": "Product 1",
+    "price": 97000,
+}
+
+!!! SETELAH CONTENT-TYPE harus enter. Kalau tidak, akan error.
+Di param json terakhir, tidak perlu koma, karena bikin error.
+T}} 23.43
+
+
+##buat UPDATE
+Copy dari createProduct. Buat async.
+Perhatikan dan ubah dari create menjadi update:
+await prisma.product.update({
+
+T}} 26.48 product updated
+
+
+200 = success (update)
+201 = success insert
+400 = 
+404 = 
+
+
+T}} 27.32 DELETE Testing
+T}} 28.00 Backend Completed
+
+====================================
+At  mern-stack
+>>npx create-react-app frontend
+>>cd frontend
+
+>>npm i axios react-router-dom swr
+swr = untuk realtime data fetching
+https://swr.vercel.app/
+
+tailwindcss.com
+Di Website tailwind, pilih menu pada Framework Guide> Create React App
+>>npm install -D tailwindcss postcss autoprefixer
+>>npx tailwindcss init -p
+akan muncul tambahan 2 file:
+-tailwind.config.js
+-postcss.config.js
+
+ikuti langkah2 sesuai website tailwind:
+pada frontend\src\index.css, ganti menjadi ini:
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+muncul warning setelah paste di atas,
+pergi ke setting>ketik 'unknown'>pada css ganti menjadi ignore.
+
+
+App.js
+>>npm start
+
+pada tailwind.config.js, isikan container center true.
+theme: {
+    container: {
+      center: true
+    },
+  },
+
+
+pada App.js, hapus ini agar tidak muncul warning.
+import logo from './logo.svg';
+import './App.css';
+
+
+T}} 36.51
+melakukan sedikit cleanup. Hapus:
+-App.css
+-App.test.js
+-logo.svg
+-reportWebVitals.js
+-setupTest.js
+
+muncul error.
+pada index.js, hapus yg reportWebVitals.
+
+
+pada src, New Folder: components 
+
+T}} 38.12 installasi extensi untuk permudah buat react pada vscode: es7+ React/Redux
+Pada components, New File : ProductList.jsx
+ketik : rafce
+
+install extension : tailwind css intellisense
+
+Pada ProductList.jsx
+buat beberapa div yang ada classNamenya. diantaranya:
+.w-full
+.relative.shadow.rounded-lg.mt-3
+
+T}} 40.35
+buat table:
+table>(thead>tr>th*4)+(tbody>tr>td*4)
+
+setting table class(css dengan tailwind)
+border-b  === border bottom
+
+T}} 44.43
+Pada App.js, import react-router-dom:
+import {BrowserRouter, Routes, Route} from "react-router-dom";
+
+sehingga keseluruhan App.js jadi seperti ini:
+*****
+import {BrowserRouter, Routes, Route} from "react-router-dom";
+import ProductList from "./components/ProductList";
+
+function App() {
+  return (
+    <div className="container">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<ProductList/>}/>
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
+}
+export default App;
+*****
+
+Tabel tampil dengan benar.
+
+
+
+
+
+Pergi ke ProductList.jsx, Gunakan Link.
+import link, dan tambahkan, untuk membuat tombol Add New:
+import { Link } from 'react-router-dom';
+...
+<Link to="/add" className='bg-green-500 hover:bg-green-700 border-slate-200 text-white font-bold py-2 px-4 rounded-lg'>Add New</Link>
+
+
+
+Buat tombol Action: Edit dan Delete.
+    <td className='py-3 px-1 text-center'>
+        <Link to={`/edit/`} className="font-medium bg-blue-400 hover:bg-blue-500 px-3 py-1 rounded text-white mr-1">Edit</Link>
+        <button className="font-medium bg-red-400 hover:bg-red-500 px-3 py-1 rounded text-white">Delete</button>
+    </td>
+
+!!! ingat, di Link to, pakai BACKTICK
+
+T}} 49.40
+
+import axios dan SWR pada ProductList.jsx, karena kita akan melakukan fetching data secara realtime.
+import axios from 'axios';
+import useSWR from "swr";
+
+buat method untuk fetching datanya.
+    const fetcher = async () => {
+        const response = await axios.get('http://localhost:5000/products');
+        return response.data;
+    };
+
+    const {data} = useSWR('products', fetcher);
+    if(!data) return <h2>Loading...</h2>;
+
+
+loop data pada tbody. Pakai function arrow map.
+    {data.map((product, index) => (
+        <tr className='bg-white border-b' key={product.id}>
+            <td className='py-3 px-1 text-center'>{index+1}</td>
+            <td className='py-3 px-6 font-medium text-gray-900'>{product.name}</td>
+            <td className='py-3 px-6'>{product.price}</td>
+            <td className='py-3 px-1 text-center'>
+                <Link to={`/edit/${product.id}`} className="font-medium bg-blue-400 hover:bg-blue-500 px-3 py-1 rounded text-white mr-1">Edit</Link>
+                <button className="font-medium bg-red-400 hover:bg-red-500 px-3 py-1 rounded text-white">Delete</button>
+            </td>
+        </tr>
+    ))}
+
+
+T}} 53.20 Muncul data sesuai database. Harus RUN juga yg backendnya. (nodemon index)
+
+saat klik Add New, akan diarahkan buka /add
+
+testing insert and update. Ternyata langsung load pada tampilan browsernya.
+
+
+======
+T}} Sekarang mengurus yang delete. Kembali ke ProductList.jsx.
+Buat onClick.
+<button onClick={() => deleteProduct(product.id)} 
+
+Buat method
+*****
+    const deleteProduct = async (productId) =>{
+        await axios.delete(`http://localhost:5000/products/${productId}`);
+    }
+*****
+
+Jika berhasil terhapus, kita perlu memutasi data dari SWRnya. Tambahkan : useSWRConfig.
+import useSWR, {useSWRConfig} from "swr";
+
+Buat const mutasinya:
+    const {mutate} = useSWRConfig();
+
+Kemudian kita mutasi di const deleteProduct.
+Kita mutasi berdasarkan key nya, yaitu products (pada: useSWR('products', fetcher)  ).
+Sehingga jadi seperti ini const nya deleteProduct:
+*****
+    const deleteProduct = async (productId) =>{
+        await axios.delete(`http://localhost:5000/products/${productId}`);
+        mutate("products");
+    }
+*****
+
+Saat dicoba di browser, tekan tombol delete, berhasil terhapus.
+
+T}} 57.25
+
+
+========
+Kembali ke vscode. 
+Buat ===Add New Product===.
+Pada components, create New File: AddProduct.jsx
+rafce
+buat element2 html dan class(css) nya (input dan button)
+
+T}} 1.02.18 Ke App.js
+Import component AddProduct
+Tambah element <Route> di App.js:
+<Route path="/add" element={<AddProduct/>}/>
+
+kembali ke browser. Jika klik Add New, maka akan diarahkan ke halaman(route) : /add
+
+
+ke halaman AddProduct.jsx, tambahkan useState hook:
+
+const [name, setName] = useState("");
+    const [price, setPrice] = useState("");
+    const navigate = useNavigate();
+    
+    // preventDefault agar setiap submit tidak reload.
+    const saveProduct = async (e) =>{
+        e.preventDefault();
+        await axios.post("http://localhost:5000/products", {
+            name: name, //memakai variable state
+            price: parseInt(price) // type data backend is INT, this data send as STRING, SO must be convert parseInt()
+        });
+    };
+
+kemudian, jika data berhasil tersimpan ke db, setelah itu akan di redirect ke home.
+Gunakan navigate("/");
+
+T}} 1.06.30
+Ke browser untuk testing insert form
+
+
+====== Buat EDIT Product
+T}} 1.07.28
+Copas dari component AddProduct.jsx. Paste pada EditProduct.jsx.
+
+ke App.js
+menampilkan data pada input. gunakan useEffect untuk fetch datanya.
+Disitu tidak menggunakan SWR, karena tidak ingin realtime.
+
+ke EditProduct.jsx.
+ambil parameter id nya dengan useParam dari react-router-dom.
+import { useNavigate, useParams } from 'react-router-dom';
+
+const {id} = useParams();
+
+kemudian masukkan responsenya ke dalam statenya name dan price.
+
+
+lalu panggil getProductById().
+lalu tambahkan dependencinya yaitu id. Di paling belakang function useEffect ada ...,[id]);
+Ketika terdapat perubahan pada id, maka kita akan memanggil useEffect tersebut.
+
+Kemudian pada const updateProduct(), ubah method axiosnya menjadi: axios.patch(...)
+Testing update berhasil.
+
+
+
+
+
+
+
+
+
+
+
+
